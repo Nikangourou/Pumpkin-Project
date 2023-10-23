@@ -2,6 +2,7 @@ import * as THREE from "three";
 import Experience from "../Experience";
 import LianaMaterial from "../Materials/LianaMaterial";
 import Alea from "alea";
+import anime from 'animejs/lib/anime.es.js';
 
 export default class Liana {
     constructor() {
@@ -13,6 +14,7 @@ export default class Liana {
         this.amount = 6
         this.angle = 0.2
         this.zOffset = 0.5
+        this.easing = 0
 
         this.lianaArray = []
         this.basePath = new THREE.CatmullRomCurve3([
@@ -95,6 +97,7 @@ export default class Liana {
             this.debugFolder = this.debug.addFolder('liana')
         }
 
+        this.setEasing()
         this.setModels()
         this.update()
         this.setDebug()
@@ -170,8 +173,29 @@ export default class Liana {
         }
     }
 
-    update(time) {
+    setEasing()
+    {
+        let easingValue = {
+            value: 0,
+        }
         
+        anime({
+            targets: easingValue,
+            value: 2,
+            duration: 4000,
+            easing: 'cubicBezier(.5, .05, .1, .3)',
+            update: () => {
+                this.easing = easingValue.value
+            }
+        });
+
+    }
+
+    update(time) 
+    {
+        for(let i = 0; i < this.lianaArray.length; i++){
+            this.lianaArray[i].material.update(time, this.easing);
+        }
     }
 
     setDebug() {
