@@ -111,7 +111,7 @@ export default class Liana {
         this.path.points.push(new THREE.Vector3(0, 0, 0))
 
         // midle points
-        for (let x = 0; x < 5; x++) {
+        for (let x = 0; x < 8; x++) {
             let y = (sin(x + prng) + sin(2.2 * (x + prng) + 5.52) + sin(2.9 * (x + prng) + 0.93) + sin(4.6 * (x + prng) + 8.94)) / 4
             this.path.points.push(new THREE.Vector3(x, y, 0))
         }
@@ -124,7 +124,9 @@ export default class Liana {
         //     this.path.points.push(new THREE.Vector3(point.x, y2, point.z))
         // });
 
-        this.createLianaEndSpirale(prng)
+
+
+        // this.createLianaEndSpirale(prng)
     }
 
     createLianaEndSpirale(prng) {
@@ -139,7 +141,6 @@ export default class Liana {
             let x = nb * Math.cos(nb) * coef + lastPoint.x
             let y = nb * Math.sin(nb) * coef + lastPoint.y
             let z = nb * Math.sin(nb)
-
 
             this.path.points.push(new THREE.Vector3(x, y, 0))
         }
@@ -173,16 +174,16 @@ export default class Liana {
         }
     }
 
-    setEasing()
-    {
+    setEasing() {
         let easingValue = {
             value: 0,
         }
-        
+
         anime({
             targets: easingValue,
             value: 2,
             duration: 4000,
+            delay: 1000,
             easing: 'cubicBezier(.5, .05, .1, .3)',
             update: () => {
                 this.easing = easingValue.value
@@ -191,10 +192,11 @@ export default class Liana {
 
     }
 
-    update(time) 
-    {
-        for(let i = 0; i < this.lianaArray.length; i++){
+    update(time) {
+        for (let i = 0; i < this.lianaArray.length; i++) {
             this.lianaArray[i].material.update(time, this.easing);
+            // wave animation
+            this.lianaArray[i].rotation.x = Math.sin(time * 0.5 + i) * 0.1
         }
     }
 

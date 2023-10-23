@@ -5,6 +5,7 @@ import Environment from './Environment.js'
 import Pumpkin from './Pumpkin.js'
 import Liana from './Liana.js'
 import Floor from './Floor.js'
+import Pedestal from './Pedestal.js'
 
 export default class World
 {
@@ -22,6 +23,7 @@ export default class World
                 this.pumpkin = new Pumpkin()
                 this.liana = new Liana()
                 this.floor = new Floor()
+                this.pedestal = new Pedestal()
 
                 this.environment = new Environment()
                 this.setup3D()
@@ -69,6 +71,9 @@ export default class World
         // animate the liana material
         if (this.liana) {
             this.liana.update(this.elapsedTime);
+        }
+        if (this.pumpkin) {
+            this.pumpkin.update(this.elapsedTime);
         }
     }
 
