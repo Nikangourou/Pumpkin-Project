@@ -8,7 +8,7 @@ import Stats from './Utils/Stats.js'
 import Resources from './Resources.js'
 import Renderer from './Renderer.js'
 import Camera from './Camera.js'
-import World from './World.js'
+import World from './World/World.js'
 
 import assets from './assets.js'
 
