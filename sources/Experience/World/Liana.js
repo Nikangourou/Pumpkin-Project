@@ -15,6 +15,7 @@ export default class Liana {
         this.angle = 0.2
         this.zOffset = 0.5
         this.easing = 0
+        this.speed = 4000
 
         this.lianaArray = []
         this.basePath = new THREE.CatmullRomCurve3([
@@ -97,7 +98,6 @@ export default class Liana {
             this.debugFolder = this.debug.addFolder('liana')
         }
 
-        this.setEasing()
         this.setModels()
         this.update()
         this.setDebug()
@@ -192,6 +192,8 @@ export default class Liana {
 
             this.scene.add(this.mesh);
             this.lianaArray.push(this.mesh);
+            this.setEasing(i);
+            this.setSpeed(i);
 
             (i % 3 == 0) ?
                 this.mesh.rotation.y = Math.PI / this.amount * 2 * i + this.angle
@@ -199,29 +201,51 @@ export default class Liana {
         }
     }
 
-    setEasing() {
+    setEasing(i)
+    {
         let easingValue = {
             value: 0,
         }
 
         anime({
             targets: easingValue,
-            value: 2,
-            duration: 4000,
             delay: 1000,
-            easing: 'cubicBezier(.5, .05, .1, .3)',
+            value: 1,
+            duration: this.easing + i * 3000,
+            easing: 'cubicBezier(1.000, 0.000, 0.575, 0.760)',
+
             update: () => {
-                this.easing = easingValue.value
+                this.uEasing = easingValue.value
             }
         });
-
     }
 
-    update(time) {
-        for (let i = 0; i < this.lianaArray.length; i++) {
-            this.lianaArray[i].material.update(time, this.easing);
-            // wave animation
-            this.lianaArray[i].rotation.x = Math.sin(time * 0.5 + i) * 0.1
+    setSpeed(i)
+    {
+        let speedValue = {
+            value: 0,
+        }
+        
+        anime({
+            targets: speedValue,
+            value: 1,
+            duration: this.speed + i * 3000,
+            easing: 'cubicBezier(1.000, 0.000, 0.575, 0.760)',
+            update: () => {
+                this.uSpeed = speedValue.value
+            }
+        });
+    }
+
+
+    update(time) 
+    {
+        for(let i = 0; i < this.lianaArray.length; i++){
+            let finalEasing;
+            (i % 3 == 0) ?
+                finalEasing = this.uEasing * i * 0.4
+                : finalEasing = this.uEasing * i * 0.2;
+            this.lianaArray[i].material.update(time, finalEasing, this.uSpeed);
         }
     }
 
@@ -245,6 +269,17 @@ export default class Liana {
                 .min(0)
                 .max(1)
                 .step(0.01)
+                .onChange(() => {
+                    this.destroy()
+                    this.setModels()
+                })
+
+            this.debugFolder
+                .add(this, 'easing')
+                .name('easing')
+                .min(0)
+                .max(4000)
+                .step(1000)
                 .onChange(() => {
                     this.destroy()
                     this.setModels()
