@@ -11,8 +11,6 @@ export default [
                 { name: 'pumpkin', source: '/assets/pumpkin.glb', type: 'gltf' },
                 { name: 'pumpkinDiffuse', source: '/assets/pumpkin-diffuse.png', type: 'texture' },
                 { name: 'lianaMatcap', source: '/assets/liana-matcap.png', type: 'texture' },
-                { name: 'pedestal', source: '/assets/pedestal.glb'},
-                {name: 'pedestalDiffuse', source: '/assets/pedestal-diffuse.png', type: 'texture' },
             ]
     }
 ]

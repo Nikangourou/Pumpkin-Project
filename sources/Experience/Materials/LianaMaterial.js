@@ -22,9 +22,7 @@ export default class LianaMaterial extends MeshMatcapMaterial {
     super.onBeforeCompile(shader, renderer);
 
     shader.uniforms.uTime = { value: 0 };
-    shader.uniforms.uPoints = { value: this.params.points }
     shader.uniforms.uEasing = { value: 0 };
-
 
     const snoise4 = glsl`#pragma glslify: snoise4 = require(glsl-noise/simplex/4d)`;
 
@@ -41,6 +39,9 @@ export default class LianaMaterial extends MeshMatcapMaterial {
         '}',
         'float random(vec2 st){',
         '   return fract(sin(dot(st.xy, vec2(12.9898,78.233)))* 43758.5453123);',
+        '}',
+        'float fit(float value, float min, float max, float newMin, float newMax){',
+        '   return newMin + (newMax - newMin) * (value - min) / (max - min);',
         '}',
 
         'void main() {',
@@ -72,17 +73,16 @@ export default class LianaMaterial extends MeshMatcapMaterial {
     //   `
     // );
 
-    // RADIUS GROWING :
+    // RADIUS :
     shader.vertexShader = shader.vertexShader.replace(
       '#include <project_vertex>',
       `
-          transformed = transformed + normalize(normal) * 0.1 * uEasing *(1.-uv.x);
+          transformed = transformed + normalize(normal) * 0.1 * fit(uEasing, 0., 1., mix(0.5, 0., uv.x), 1.) * (1.-uv.x);
           // transformed = clamp(uv.x, 0., 1.);
           #include <project_vertex>
         `
     );
-
-
+    
     // UVX
     shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', [
       '#include <map_fragment>',
