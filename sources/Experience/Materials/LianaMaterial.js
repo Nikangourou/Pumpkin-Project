@@ -26,6 +26,7 @@ export default class LianaMaterial extends MeshMatcapMaterial {
     shader.uniforms.uTime = { value: 0 };
     shader.uniforms.uPoints = {value : this.params.points}
     shader.uniforms.uEasing = {value : 0};
+    shader.uniforms.uSpeed = {value : 0};
 
 
     const snoise4 = glsl`#pragma glslify: snoise4 = require(glsl-noise/simplex/4d)`;
@@ -35,6 +36,7 @@ export default class LianaMaterial extends MeshMatcapMaterial {
       [
         'uniform float uTime;',
         'uniform float uEasing;',
+        'uniform float uSpeed;',
         'varying vec3 vPosition;',
         `varying vec2 vUv;`,
         snoise4,
@@ -54,6 +56,8 @@ export default class LianaMaterial extends MeshMatcapMaterial {
     shader.fragmentShader = shader.fragmentShader.replace('void main() {', 
       [
           `uniform float uTime;`,
+          `uniform float uEasing;`,
+          `uniform float uSpeed;`,
           `varying vec3 vPosition;`,
           `varying vec2 vUv;`,
           'float clampedSine(float t){',
@@ -77,8 +81,27 @@ export default class LianaMaterial extends MeshMatcapMaterial {
     shader.vertexShader = shader.vertexShader.replace(
       '#include <project_vertex>', 
       `
+          // GROSSISSEMENT DU RADIUS AU DEBUT
           transformed = transformed + normalize(normal) * 0.1 * uEasing *(1.-uv.x);
-          // transformed = clamp(uv.x, 0., 1.);
+
+          // FLOTTEMENT DES LIANES
+          // transformed += clampedSine(uTime + uv.x) *uv.x *0.5;
+
+
+
+          // TEST
+          // transformed = transformed + normalize(normal) * abs(cos(transformed *(1./10.) *10. - uv.x));
+
+          // GROSSISSEMENT AU PROGRES
+          float len = 0.0001;
+          // la valeur progress doit aller de 0 à 1 et être en boucle
+          float progress = abs(sin(uTime * 0.1 + (1.-uv.x) * 2.));
+          float smoothing = 0.05;
+          float mask = 1. - smoothstep(progress + len - smoothing, progress + len + smoothing, uv.x);
+          mask *= smoothstep(progress - len - smoothing, progress - len + smoothing, uv.x);
+
+          transformed += normal * mask * 0.3;
+
           #include <project_vertex>
         `
     );
@@ -88,7 +111,26 @@ export default class LianaMaterial extends MeshMatcapMaterial {
       '#include <map_fragment>',
       // transparency
       // 'float a = 1. - vUv.x;', 
-      'diffuseColor = vec4(vec3(1. -vUv.x), 1.0);',
+      'if(vUv.x > uSpeed ){',
+      '   discard;',
+      '}',
+
+      // 'float pulse = abs(cos(uTime * (1.-vUv.x)));',
+      'float pulse = abs(sin(uTime * 0.2 + (1.-vUv.x) * 2.) * 2.);',
+
+      // GROSSISSEMENT AU PROGRES
+      `float len = 0.0001;`,
+      // la valeur progress doit aller de 0 à 1 et être en boucle
+      `float progress = abs(sin(uTime * 0.1 + (1.-vUv.x) * 2.));`,
+      `float smoothing = 0.05;`,
+      `float mask = 1. - smoothstep(progress + len - smoothing, progress + len + smoothing, vUv.x);`,
+      `mask *= smoothstep(progress - len - smoothing, progress - len + smoothing, vUv.x);`,
+
+      `diffuseColor.rgb = diffuseColor.rgb - mask * 10.;`,
+
+      // 'float pulse = abs(sin(uTime + (1.-vUv.x * 20.)) * 2.);',
+
+      'diffuseColor = vec4(diffuseColor.rgb, 1.0);',
     ].join('\n'));
 
     // NOISE :
@@ -122,10 +164,11 @@ export default class LianaMaterial extends MeshMatcapMaterial {
     this.userData.shader = shader;
   }
 
-  update(time, easingValue) {
+  update(time, easingValue, speedValue) {
     if (this.userData?.shader) {
       this.userData.shader.uniforms.uTime.value = time;
       this.userData.shader.uniforms.uEasing.value = easingValue;
+      this.userData.shader.uniforms.uSpeed.value = speedValue;
     }
   }
 }
