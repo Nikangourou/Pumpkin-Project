@@ -11,7 +11,7 @@ export default class Liana {
         this.resources = this.experience.resources
 
         // parameters
-        this.amount = 6
+        this.amount = 8
         this.angle = 0.2
         this.zOffset = 0.5
         this.easing = 0
@@ -192,8 +192,8 @@ export default class Liana {
 
             this.scene.add(this.mesh);
             this.lianaArray.push(this.mesh);
-            this.setEasing(i);
-            this.setSpeed(i);
+            this.setEasing();
+            this.setSpeed();
 
             (i % 3 == 0) ?
                 this.mesh.rotation.y = Math.PI / this.amount * 2 * i + this.angle
@@ -201,7 +201,7 @@ export default class Liana {
         }
     }
 
-    setEasing(i)
+    setEasing()
     {
         let easingValue = {
             value: 0,
@@ -210,8 +210,8 @@ export default class Liana {
         anime({
             targets: easingValue,
             delay: 1000,
-            value: 1,
-            duration: this.easing + i * 3000,
+            value: 2,
+            duration: this.speed,
             easing: 'cubicBezier(1.000, 0.000, 0.575, 0.760)',
 
             update: () => {
@@ -220,7 +220,7 @@ export default class Liana {
         });
     }
 
-    setSpeed(i)
+    setSpeed()
     {
         let speedValue = {
             value: 0,
@@ -229,7 +229,7 @@ export default class Liana {
         anime({
             targets: speedValue,
             value: 1,
-            duration: this.speed + i * 3000,
+            duration: this.speed,
             easing: 'cubicBezier(1.000, 0.000, 0.575, 0.760)',
             update: () => {
                 this.uSpeed = speedValue.value
@@ -241,11 +241,11 @@ export default class Liana {
     update(time) 
     {
         for(let i = 0; i < this.lianaArray.length; i++){
-            let finalEasing;
-            (i % 3 == 0) ?
-                finalEasing = this.uEasing * i * 0.4
-                : finalEasing = this.uEasing * i * 0.2;
-            this.lianaArray[i].material.update(time, finalEasing, this.uSpeed);
+            // let finalEasing;
+            // (i % 3 == 0) ?
+            //     finalEasing = this.uEasing * i * 0.4
+            //     : finalEasing = this.uEasing * i * 0.2;
+            this.lianaArray[i].material.update(time, this.uEasing);
         }
     }
 
@@ -255,11 +255,12 @@ export default class Liana {
             this.debugFolder
                 .add(this, 'amount')
                 .name('amount')
-                .min(1)
+                .min(5)
                 .max(10)
                 .step(1)
                 .onChange(() => {
                     this.destroy()
+                    this.setEasing()
                     this.setModels()
                 })
 
@@ -271,17 +272,19 @@ export default class Liana {
                 .step(0.01)
                 .onChange(() => {
                     this.destroy()
+                    this.setEasing()
                     this.setModels()
                 })
 
             this.debugFolder
-                .add(this, 'easing')
-                .name('easing')
-                .min(0)
-                .max(4000)
+                .add(this, 'speed')
+                .name('speed')
+                .min(4000)
+                .max(8000)
                 .step(1000)
                 .onChange(() => {
                     this.destroy()
+                    this.setEasing()
                     this.setModels()
                 })
         }
