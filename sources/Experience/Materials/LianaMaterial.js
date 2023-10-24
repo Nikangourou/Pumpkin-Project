@@ -14,8 +14,6 @@ export default class LianaMaterial extends MeshMatcapMaterial {
 
   }
 
-
-
   /**
    * @param { import("three").Shader } shader
    * @param { import("three").WebGLRenderer } renderer
@@ -24,10 +22,8 @@ export default class LianaMaterial extends MeshMatcapMaterial {
     super.onBeforeCompile(shader, renderer);
 
     shader.uniforms.uTime = { value: 0 };
-    shader.uniforms.uPoints = {value : this.params.points}
-    shader.uniforms.uEasing = {value : 0};
+    shader.uniforms.uEasing = { value: 0 };
     shader.uniforms.uSpeed = {value : 0};
-
 
     const snoise4 = glsl`#pragma glslify: snoise4 = require(glsl-noise/simplex/4d)`;
 
@@ -46,14 +42,17 @@ export default class LianaMaterial extends MeshMatcapMaterial {
         'float random(vec2 st){',
         '   return fract(sin(dot(st.xy, vec2(12.9898,78.233)))* 43758.5453123);',
         '}',
-        
+        'float fit(float value, float min, float max, float newMin, float newMax){',
+        '   return newMin + (newMax - newMin) * (value - min) / (max - min);',
+        '}',
+
         'void main() {',
         '   vPosition = position;',
         `   vUv = uv;`,
       ].join('\n')
     );
 
-    shader.fragmentShader = shader.fragmentShader.replace('void main() {', 
+    shader.fragmentShader = shader.fragmentShader.replace('void main() {',
       [
           `uniform float uTime;`,
           `uniform float uEasing;`,
@@ -77,17 +76,15 @@ export default class LianaMaterial extends MeshMatcapMaterial {
     //   `
     // );
 
-    // RADIUS GROWING :
+    // RADIUS :
     shader.vertexShader = shader.vertexShader.replace(
-      '#include <project_vertex>', 
+      '#include <project_vertex>',
       `
-          // GROSSISSEMENT DU RADIUS AU DEBUT
-          transformed = transformed + normalize(normal) * 0.1 * uEasing *(1.-uv.x);
+          transformed = transformed + normalize(normal) * 0.1 * fit(uEasing, 0., 1., mix(0.5, 0., uv.x), 1.) * (1.-uv.x);
+          // transformed = clamp(uv.x, 0., 1.);
 
           // FLOTTEMENT DES LIANES
           // transformed += clampedSine(uTime + uv.x) *uv.x *0.5;
-
-
 
           // TEST
           // transformed = transformed + normalize(normal) * abs(cos(transformed *(1./10.) *10. - uv.x));
@@ -105,12 +102,13 @@ export default class LianaMaterial extends MeshMatcapMaterial {
           #include <project_vertex>
         `
     );
-
+    
     // UVX
     shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', [
       '#include <map_fragment>',
       // transparency
       // 'float a = 1. - vUv.x;', 
+
       'if(vUv.x > uSpeed ){',
       '   discard;',
       '}',
@@ -132,6 +130,8 @@ export default class LianaMaterial extends MeshMatcapMaterial {
 
       'diffuseColor = vec4(diffuseColor.rgb, 1.0);',
     ].join('\n'));
+
+
 
     // NOISE :
     // shader.vertexShader = shader.vertexShader.replace('#include <project_vertex>', [

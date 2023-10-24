@@ -111,7 +111,7 @@ export default class Liana {
         this.path.points.push(new THREE.Vector3(0, 0, 0))
 
         // midle points
-        for (let x = 0; x < 5; x++) {
+        for (let x = 0; x < 8; x++) {
             let y = (sin(x + prng) + sin(2.2 * (x + prng) + 5.52) + sin(2.9 * (x + prng) + 0.93) + sin(4.6 * (x + prng) + 8.94)) / 4
             this.path.points.push(new THREE.Vector3(x, y, 0))
         }
@@ -130,19 +130,40 @@ export default class Liana {
     createLianaEndSpirale(prng) {
         // last point
         let lastPoint = this.path.points[this.path.points.length - 1]
-        let coef = 0.2
+        const sin = Math.sin
 
-        //    take the 7 lats point of the path and do a spirale
-        for (let nb = 0; nb < 10; nb += 0.1) {
 
+        if (prng < 33) {
+            let coef = 0.2
             // Archimedean spiral
-            let x = nb * Math.cos(nb) * coef + lastPoint.x
-            let y = nb * Math.sin(nb) * coef + lastPoint.y
-            let z = nb * Math.sin(nb)
+            for (let nb = 0; nb < 10; nb ++) {
 
+                let x = nb * Math.cos(nb) * coef + lastPoint.x
+                let y = nb * Math.sin(nb) * coef + lastPoint.y
+                let z = nb * Math.sin(nb) * nb * 0.02
 
-            this.path.points.push(new THREE.Vector3(x, y, 0))
+                this.path.points.push(new THREE.Vector3(x, y, z))
+            }
+        } else if (prng < 66) {
+            // Classic end 
+            for (let x = 8; x < 12; x++) {
+                let y = (sin(x + prng) + sin(2.2 * (x + prng) + 5.52) + sin(2.9 * (x + prng) + 0.93) + sin(4.6 * (x + prng) + 8.94)) / 4
+                this.path.points.push(new THREE.Vector3(x, y, 0))
+            }
+        } else {
+            // Spirng spiral
+            for (let nb = 0; nb < 13; nb ++) {
+
+                let x = nb * 0.1 + lastPoint.x
+                let y = nb * Math.sin(nb) * 0.05 + lastPoint.y
+                let z = nb * Math.cos(nb) * 0.05 
+
+                this.path.points.push(new THREE.Vector3(x, y, z))
+            }
+
+            
         }
+
 
     }
 
@@ -154,13 +175,18 @@ export default class Liana {
             this.geometry = new THREE.TubeGeometry(
                 chosenPath,
                 100,
-                0.05 + i * Math.random() * 0.01,
+                0.001,
                 8,
                 false
             );
+
+            this.matcap = this.resources.items.lianaMatcap;
+            this.matcap.flipY = false;
+            this.matcap.wrapS = THREE.RepeatWrapping;
+            this.matcap.wrapT = THREE.RepeatWrapping;
+
             this.material = new LianaMaterial({
-                matcap: this.resources.items.lianaMatcap,
-                points: chosenPath.points,
+                matcap: this.matcap,
             });
             this.mesh = new THREE.Mesh(this.geometry, this.material);
 
@@ -180,12 +206,14 @@ export default class Liana {
         let easingValue = {
             value: 0,
         }
-        
+
         anime({
             targets: easingValue,
+            delay: 1000,
             value: 1,
             duration: this.easing + i * 3000,
             easing: 'cubicBezier(1.000, 0.000, 0.575, 0.760)',
+
             update: () => {
                 this.uEasing = easingValue.value
             }
@@ -208,6 +236,7 @@ export default class Liana {
             }
         });
     }
+
 
     update(time) 
     {
