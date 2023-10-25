@@ -10,9 +10,11 @@ export default class Floor
         this.resources = this.experience.resources
 
         this.resource = this.resources.items.floor
+        // this.map = this.resources.items.pumpkinDiffuse;
         this.setModel()
     }
 
+  
     setModel()
     {
         // const geometry = new THREE.PlaneGeometry( 10, 10, 32 );

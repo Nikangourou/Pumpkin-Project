@@ -24,6 +24,7 @@ export default [
                 // floor
                 { name: 'floor', source: '/assets/floor/floor.glb', type: 'gltf' },
 
+
             ]
     }
 ]
