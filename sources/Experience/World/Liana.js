@@ -113,7 +113,8 @@ export default class Liana {
         // midle points
         for (let x = 0; x < 8; x++) {
             let y = (sin(x + prng) + sin(2.2 * (x + prng) + 5.52) + sin(2.9 * (x + prng) + 0.93) + sin(4.6 * (x + prng) + 8.94)) / 4
-            this.path.points.push(new THREE.Vector3(x, y, 0))
+            let z = sin(prng + x*2) * 0.3
+            this.path.points.push(new THREE.Vector3(x, y, z))
         }
 
         // parcours the base path
@@ -189,6 +190,7 @@ export default class Liana {
                 matcap: this.matcap,
             });
             this.mesh = new THREE.Mesh(this.geometry, this.material);
+            this.mesh.receiveShadow = true;
 
             this.scene.add(this.mesh);
             this.lianaArray.push(this.mesh);

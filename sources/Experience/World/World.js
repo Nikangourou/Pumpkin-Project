@@ -70,9 +70,9 @@ export default class World
         if (this.liana) {
             this.liana.update(this.elapsedTime);
         }
-        if (this.pumpkin) {
-            this.pumpkin.update(this.elapsedTime);
-        }
+        // if (this.pumpkin) {
+        //     this.pumpkin.update(this.elapsedTime);
+        // }
     }
 
     destroy()

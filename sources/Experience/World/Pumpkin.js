@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import Experience from "../Experience";
 import PumpkinMaterial from "../Materials/PumpkinMaterial";
+import anime from "animejs";
 
 export default class Pumpkin {
   constructor() {
@@ -11,6 +12,8 @@ export default class Pumpkin {
     this.resource = this.resources.items.pumpkin
     this.map = this.resources.items.pumpkinDiffuse;
     this.setModel()
+    this.setJumping()
+    this.setAnimation()
 
     this.pass = false
   }
@@ -33,18 +36,57 @@ export default class Pumpkin {
     });
   }
 
+  // write an animation to play on reload
 
-  update(time) {
-    // jump animation
-    if (this.model.position.y < 0.5 && !this.pass) {
-      this.model.position.y += 0.01
-    }
-    else {
-      this.pass = true
-      // jump
-      this.model.position.y = 0.5 + Math.sin(time * 2) * 0.1
-      
+    setJumping()
+    {
+        let jumpingValue = {
+            value: -1,
+        }
+
+        anime({
+            targets: jumpingValue,
+            value: 0.2,
+            duration: 2000,
+            easing: 'spring(15, 100, 30, 8)',
+
+            update: () => {
+                this.model.position.y = jumpingValue.value
+            }
+        });
     }
 
-  }
+    setAnimation(){
+      setInterval(() => {
+      let animValue = {
+        value: 0,
+      }
+
+      let posValue = {
+        value: 0,
+      }
+
+      anime({
+        targets: animValue,
+        value: Math.PI*2,
+        easing: 'spring(1, 80, 5, 10)',
+
+        update: () => {
+            this.model.rotation.y = animValue.value
+        }
+      });
+
+      anime({
+        targets: posValue,
+        value: 0.6,
+        easing: 'spring(1, 80, 5, 10)',
+
+        update: () => {
+            this.model.position.y = posValue.value
+        }
+      });
+
+      }, 10000);
+    }
+
 }
