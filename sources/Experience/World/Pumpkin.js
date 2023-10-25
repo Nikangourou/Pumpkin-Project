@@ -11,6 +11,7 @@ export default class Pumpkin {
 
     this.resource = this.resources.items.pumpkin
     this.map = this.resources.items.pumpkinDiffuse;
+    // this.map.colorSpace = THREE.SRGBColorSpace;
     this.setModel()
     this.setJumping()
     this.setAnimation()
@@ -22,7 +23,7 @@ export default class Pumpkin {
     this.map.flipY = false;
     this.map.wrapS = THREE.RepeatWrapping;
     this.map.wrapT = THREE.RepeatWrapping;
-    this.material = new THREE.MeshBasicMaterial({
+    this.material = new THREE.MeshStandardMaterial({
       map: this.map,
     });
 
@@ -31,8 +32,17 @@ export default class Pumpkin {
     this.model.position.set(0, 0, 0)
     this.scene.add(this.model);
 
+    this.pumpkinLight = new THREE.PointLight('#ffaf19', 50, 7)
+    this.pumpkinLight.castShadow = true
+    this.pumpkinLight.position.set(0, 1.5, 0)
+    this.model.add(this.pumpkinLight)
+
     this.model.traverse((o) => {
-      if (o.isMesh) o.material = this.material;
+      if (o.isMesh) {
+        o.material = this.material;
+        o.castShadow = true;
+        o.receiveShadow = true;
+      }
     });
   }
 

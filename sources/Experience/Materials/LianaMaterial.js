@@ -1,9 +1,9 @@
-import { MeshMatcapMaterial } from 'three';
+import { MeshStandardMaterial } from 'three';
 import glsl from 'glslify';
 
-export default class LianaMaterial extends MeshMatcapMaterial {
+export default class LianaMaterial extends MeshStandardMaterial {
   /**
-   * @param { import("three").MeshMatcapMaterialParameters } params
+   * @param { import("three").MeshStandardMaterialParameters } params
    */
   constructor(params) {
     super({
@@ -34,7 +34,7 @@ export default class LianaMaterial extends MeshMatcapMaterial {
         'uniform float uEasing;',
         'uniform float uSpeed;',
         'varying vec3 vPosition;',
-        `varying vec2 vUv;`,
+        // `varying vec2 vUv;`,
         snoise4,
         'float clampedSine(float t){',
         '   return (sin(t)+1.)*.5;',
@@ -58,7 +58,7 @@ export default class LianaMaterial extends MeshMatcapMaterial {
           `uniform float uEasing;`,
           `uniform float uSpeed;`,
           `varying vec3 vPosition;`,
-          `varying vec2 vUv;`,
+          // `varying vec2 vUv;`,
           'float clampedSine(float t){',
           '   return (sin(t)+1.)*.5;',
           '}',
@@ -106,16 +106,18 @@ export default class LianaMaterial extends MeshMatcapMaterial {
       `float len = 0.0001;`,
       // la valeur progress doit aller de 0 à 1 et être en boucle
       `float progress = abs(sin(uTime * 0.1 + (1.-vUv.x) * 2.));`,
-      `float smoothing = 0.08;`,
+      `float smoothing = 0.05;`,
       `float mask = 1. - smoothstep(progress + len - smoothing, progress + len + smoothing, vUv.x);`,
       `mask *= smoothstep(progress - len - smoothing, progress - len + smoothing, vUv.x);`,
 
-      `diffuseColor.rgb -=0.5;`,
-      `diffuseColor.rgb = diffuseColor.rgb + mask * 10.;`,
-
-      // 'float pulse = abs(sin(uTime + (1.-vUv.x * 20.)) * 2.);',
+      // `diffuseColor.rgb -=0.5;`,
+      
+      `diffuseColor.g += mask * 10.;`,
+      `diffuseColor.rb += mask;`,
 
       'diffuseColor = vec4(diffuseColor.rgb, 1.0);',
+
+      // 'float pulse = abs(sin(uTime + (1.-vUv.x * 20.)) * 2.);',
     ].join('\n'));
 
     this.userData.shader = shader;

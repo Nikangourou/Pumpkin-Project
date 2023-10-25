@@ -11,6 +11,7 @@ import Camera from './Camera.js'
 import World from './World/World.js'
 
 import assets from './assets.js'
+import Environment from './World/Environment.js'
 
 export default class Experience
 {
@@ -42,6 +43,7 @@ export default class Experience
         this.setCamera()
         this.setRenderer()
         this.setResources()
+        this.setEnvironment()
         this.setWorld()
         
         this.sizes.on('resize', () =>
@@ -94,6 +96,11 @@ export default class Experience
         this.camera = new Camera()
     }
 
+    setEnvironment()
+    {
+        this.environment = new Environment()
+    }
+
     setRenderer()
     {
         this.renderer = new Renderer({ rendererInstance: this.rendererInstance })
@@ -118,11 +125,11 @@ export default class Experience
         
         this.camera.update()
 
-        if(this.world)
-            this.world.update()
-        
         if(this.renderer)
             this.renderer.update()
+
+        if(this.world)
+            this.world.update()
 
         window.requestAnimationFrame(() =>
         {
