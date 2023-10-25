@@ -9,21 +9,29 @@ export default class Floor
         this.scene = this.experience.scene
         this.resources = this.experience.resources
 
-        this.resource = this.resources.items.pumpkin
-        this.map = this.resources.items.pumpkinDiffuse;
+        this.resource = this.resources.items.floor
+        // this.map = this.resources.items.pumpkinDiffuse;
         this.setModel()
     }
 
-    setModel()
-    {
-        // add a plane parallel to XY plane
-        const geometry = new THREE.PlaneGeometry( 10, 10, 32 );
-        const material = new THREE.MeshBasicMaterial( {color: 0x271c07, side: THREE.DoubleSide} );
-        const plane = new THREE.Mesh( geometry, material );
-        plane.receiveShadow = true;
-        plane.rotateX(Math.PI/2)
-        plane.position.y = -1.5
+    setModel() {
+        // this.map.flipY = false;
+        // this.map.wrapS = THREE.RepeatWrapping;
+        // this.map.wrapT = THREE.RepeatWrapping;
+        // this.material = new THREE.MeshBasicMaterial({
+        //   map: this.map,
+        // });
 
-        this.scene.add( plane );
-    }
+    
+        this.model = this.resource.scene
+
+        this.model.scale.set(1, 1, 1)
+        // this.model.scale.set(.5, .5, .5)
+        this.model.position.set(0, 0, 0)
+        this.scene.add(this.model);
+    
+        // this.model.traverse((o) => {
+        //   if (o.isMesh) o.material = this.material;
+        // });
+      }
 }

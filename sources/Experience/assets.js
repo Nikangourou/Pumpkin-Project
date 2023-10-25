@@ -11,6 +11,7 @@ export default [
                 { name: 'pumpkin', source: '/assets/pumpkin.glb', type: 'gltf' },
                 { name: 'pumpkinDiffuse', source: '/assets/pumpkin-diffuse.png', type: 'texture' },
                 { name: 'lianaMatcap', source: '/assets/liana-matcap.png', type: 'texture' },
+                { name: 'floor', source: '/assets/floor.glb', type: 'gltf' },
             ]
     }
 ]
