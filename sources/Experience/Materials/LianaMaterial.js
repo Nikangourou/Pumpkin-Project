@@ -106,11 +106,12 @@ export default class LianaMaterial extends MeshMatcapMaterial {
       `float len = 0.0001;`,
       // la valeur progress doit aller de 0 à 1 et être en boucle
       `float progress = abs(sin(uTime * 0.1 + (1.-vUv.x) * 2.));`,
-      `float smoothing = 0.05;`,
+      `float smoothing = 0.08;`,
       `float mask = 1. - smoothstep(progress + len - smoothing, progress + len + smoothing, vUv.x);`,
       `mask *= smoothstep(progress - len - smoothing, progress - len + smoothing, vUv.x);`,
 
-      `diffuseColor.rgb = diffuseColor.rgb - mask * 10.;`,
+      `diffuseColor.rgb -=0.5;`,
+      `diffuseColor.rgb = diffuseColor.rgb + mask * 10.;`,
 
       // 'float pulse = abs(sin(uTime + (1.-vUv.x * 20.)) * 2.);',
 
