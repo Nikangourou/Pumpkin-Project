@@ -14,6 +14,8 @@ export default class World
         this.config = this.experience.config
         this.scene = this.experience.scene
         this.resources = this.experience.resources
+        this.environment = this.experience.environment
+        
         
         this.resources.on('groupEnd', (_group) =>
         {
@@ -23,7 +25,6 @@ export default class World
                 this.liana = new Liana()
                 this.floor = new Floor()
 
-                this.environment = new Environment()
                 this.setup3D()
             }
         })
@@ -37,23 +38,7 @@ export default class World
         const axesHelper = new THREE.AxesHelper(5)
         this.scene.add(axesHelper)
 
-        // Debug
-        if(this.debug)
-        {
-            // debug intensity
-            this.debugFolder
-                .add(this.amount)
-                .name('amount')
-                .min(1)
-                .max(10)
-                .step(1)
-        }
-
       }
-
-    resize()
-    {
-    }
 
     update()
     {
@@ -61,15 +46,16 @@ export default class World
         this.elapsedTime = window.performance.now() * 0.001;
         this.time = window.performance.now();
 
-        // // animate the pumpkin material
-        // if (this.pumpkin) {
-        //     this.pumpkin.material.update(this.elapsedTime);
-        // }
 
         // animate the liana material
         if (this.liana) {
             this.liana.update(this.elapsedTime);
         }
+
+        // update for the ShadowMapViewer 
+        // if (this.environment) {
+        //     this.environment.update(this.experience.renderer.instance);
+        // }
         // if (this.pumpkin) {
         //     this.pumpkin.update(this.elapsedTime);
         // }

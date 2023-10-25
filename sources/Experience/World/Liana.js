@@ -181,16 +181,38 @@ export default class Liana {
                 false
             );
 
-            this.matcap = this.resources.items.lianaMatcap;
-            this.matcap.flipY = false;
-            this.matcap.wrapS = THREE.RepeatWrapping;
-            this.matcap.wrapT = THREE.RepeatWrapping;
+            this.map = this.resources.items.barkColor;
+            this.map.flipY = false;
+            this.map.wrapS = THREE.RepeatWrapping;
+            this.map.wrapT = THREE.RepeatWrapping;
+
+            this.normalMap = this.resources.items.barkNormal;
+            this.normalMap.flipY = false;
+            this.normalMap.wrapS = THREE.RepeatWrapping;
+            this.normalMap.wrapT = THREE.RepeatWrapping;
+
+            this.roughnessMap = this.resources.items.barkRoughness;
+            this.roughnessMap.flipY = false;
+            this.roughnessMap.wrapS = THREE.RepeatWrapping;
+            this.roughnessMap.wrapT = THREE.RepeatWrapping;
+
+            this.aoMap = this.resources.items.barkAmbientOcclusion;
+            this.aoMap.flipY = false;
+            this.aoMap.wrapS = THREE.RepeatWrapping;
+            this.aoMap.wrapT = THREE.RepeatWrapping;
 
             this.material = new LianaMaterial({
-                matcap: this.matcap,
+                map: this.map,
+                normalMap: this.normalMap,
+                roughnessMap: this.roughnessMap,
+                aoMap: this.aoMap,
+                depthWrite: true
             });
+
             this.mesh = new THREE.Mesh(this.geometry, this.material);
+            this.mesh.castShadow = true;
             this.mesh.receiveShadow = true;
+            //this.mesh.customDepthMaterial = this.material
 
             this.scene.add(this.mesh);
             this.lianaArray.push(this.mesh);
