@@ -1,9 +1,9 @@
-import { MeshBasicMaterial } from 'three';
+import { MeshStandardMaterial } from 'three';
 import glsl from 'glslify';
 
-export default class PumpkinMaterial extends MeshBasicMaterial {
+export default class PumpkinMaterial extends MeshStandardMaterial {
   /**
-   * @param { import("three").MeshBasicMaterialParameters } params
+   * @param { import("three").MeshStandardMaterialParameters } params
    */
   constructor(params) {
     super({

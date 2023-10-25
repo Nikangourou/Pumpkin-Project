@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import Experience from "../Experience";
+import { ShadowMapViewer } from 'three/examples/jsm/utils/ShadowMapViewer.js';
 
 export default class Environment {
 
@@ -16,37 +17,58 @@ export default class Environment {
         }
 
         this.setSunLight()
+    //    this.createHUD()
     }
 
     setSunLight()
     {
-        this.sunLight = new THREE.DirectionalLight('#ffffff', 4)
-        this.sunLight.castShadow = true
-        // this.sunLight.shadow.camera.far = 15
-        this.sunLight.shadow.mapSize.set(1024, 1024)
-        this.sunLight.shadow.normalBias = 0.05
-        this.sunLight.position.set(5, 10, -15)
-        this.scene.add(this.sunLight)
-
-        this.ambientLight = new THREE.AmbientLight('#ffffff', 0.5)
-        this.ambientLight.castShadow = true
+        this.ambientLight = new THREE.AmbientLight('#8accff', 2)
         this.scene.add(this.ambientLight)
-        
-        //helper
-        this.sunLightHelper = new THREE.DirectionalLightHelper(this.sunLight, 1)
-        this.scene.add(this.sunLightHelper)
+
+        this.moonLight = new THREE.DirectionalLight('#8accff', 6)
+        this.moonLight.castShadow = true
+
+        this.moonLight.shadow.mapSize.set(1024, 1024)
+        this.moonLight.shadow.camera.left = - 10
+        this.moonLight.shadow.camera.right = 10
+    
+        this.moonLight.position.set(4, 4, -5)
+        this.scene.add(this.moonLight)
+
+        // helper
+        this.moonLightHelper = new THREE.DirectionalLightHelper(this.moonLight, 1)
+        this.scene.add(this.moonLightHelper)
 
         // Debug
         if(this.debug)
         {
-            // debug intensity
             this.debugFolder
-                .add(this.sunLight, 'intensity')
+                .add(this.moonLight, 'intensity')
                 .name('intensity')
                 .min(0)
                 .max(10)
                 .step(0.01)
         }
 
+    }
+
+    // createHUD() and update() are made for ShadowMapViewer
+    createHUD() {
+
+        const lightShadowMapViewer = new ShadowMapViewer( this.moonLight );
+        lightShadowMapViewer.position.x = 10;
+        lightShadowMapViewer.position.y = 10;
+        lightShadowMapViewer.size.width = 400;
+        lightShadowMapViewer.size.height = 400;
+        lightShadowMapViewer.update();
+        this.viewer = lightShadowMapViewer
+
+    }
+
+    update(renderer){
+        if (this.viewer && this.moonLight.shadow.map) {
+            this.viewer.update()
+            this.viewer.render( renderer );
+        }
     }
 }
