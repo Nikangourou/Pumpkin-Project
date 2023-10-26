@@ -26,8 +26,7 @@ export default class Renderer {
         this.setPostProcess()
     }
 
-    setInstance()
-    {
+    setInstance() {
         this.clearColor = '#050510'
 
 
@@ -54,7 +53,7 @@ export default class Renderer {
         this.instance.shadowMap.enabled = true
         // this.instance.shadowMap.autoUpdate = true
         this.instance.toneMapping = THREE.ReinhardToneMapping
-        this.instance.toneMappingExposure = 8
+        this.instance.toneMappingExposure = 2
 
 
         this.context = this.instance.getContext()
@@ -134,10 +133,20 @@ export default class Renderer {
         this.postProcess.composer.addPass(this.postProcess.renderPass)
 
         const unrealBloomPass = new UnrealBloomPass()
-        unrealBloomPass.strength = 0.3
+        unrealBloomPass.resolution.set(2048, 2048)
+        unrealBloomPass.strength = 0.8
         unrealBloomPass.radius = 0.5
-        unrealBloomPass.threshold = 0.2
+        unrealBloomPass.threshold = 0.5
         this.postProcess.composer.addPass(unrealBloomPass)
+
+        // Debug
+        if (this.debug) {
+            this.debugFolder.add(this, 'usePostprocess').name('use postprocess')
+            this.debugFolder.add(unrealBloomPass, 'strength').min(0).max(2).step(0.001).name('bloom strength')
+            this.debugFolder.add(unrealBloomPass, 'radius').min(0).max(2).step(0.001).name('bloom radius')
+            this.debugFolder.add(unrealBloomPass, 'threshold').min(0).max(1).step(0.001).name('bloom threshold')
+        }
+
     }
 
     resize() {

@@ -6,6 +6,7 @@ import Pumpkin from './Pumpkin.js'
 import Liana from './Liana.js'
 import Floor from './Floor.js'
 import Bird from './Bird.js'
+import Bat from './Bat.js'
 
 export default class World
 {
@@ -25,6 +26,7 @@ export default class World
                 this.liana = new Liana()
                 this.floor = new Floor()
                 this.bird = new Bird()
+                this.bat = new Bat()
 
                 this.setup3D()
             }
@@ -55,6 +57,10 @@ export default class World
 
         if (this.bird) {
             this.bird.update(this.elapsedTime);
+
+        if(this.bat)
+        {
+            this.bat.update(this.elapsedTime);
         }
 
         // update for the ShadowMapViewer 
