@@ -5,6 +5,7 @@ import Environment from './Environment.js'
 import Pumpkin from './Pumpkin.js'
 import Liana from './Liana.js'
 import Floor from './Floor.js'
+import Bird from './Bird.js'
 
 export default class World
 {
@@ -16,7 +17,6 @@ export default class World
         this.resources = this.experience.resources
         this.environment = this.experience.environment
         
-        
         this.resources.on('groupEnd', (_group) =>
         {
             if(_group.name === 'base')
@@ -24,6 +24,7 @@ export default class World
                 this.pumpkin = new Pumpkin()
                 this.liana = new Liana()
                 this.floor = new Floor()
+                this.bird = new Bird()
 
                 this.setup3D()
             }
@@ -50,6 +51,10 @@ export default class World
         // animate the liana material
         if (this.liana) {
             this.liana.update(this.elapsedTime);
+        }
+
+        if (this.bird) {
+            this.bird.update(this.elapsedTime);
         }
 
         // update for the ShadowMapViewer 
