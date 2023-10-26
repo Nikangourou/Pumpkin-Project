@@ -35,6 +35,9 @@ export default class Pumpkin {
     this.pumpkinLight = new THREE.PointLight('#ffaf19', 50, 7)
     this.pumpkinLight.castShadow = true
     this.pumpkinLight.position.set(0, 1.5, 0)
+    this.pumpkinLight.shadow.bias = 0.0001
+    this.pumpkinLight.shadow.mapSize.width = 2048;
+    this.pumpkinLight.shadow.mapSize.height = 2048;
     this.model.add(this.pumpkinLight)
 
     this.model.traverse((o) => {

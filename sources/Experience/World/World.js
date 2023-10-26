@@ -5,6 +5,7 @@ import Environment from './Environment.js'
 import Pumpkin from './Pumpkin.js'
 import Liana from './Liana.js'
 import Floor from './Floor.js'
+import Bat from './Bat.js'
 
 export default class World
 {
@@ -24,6 +25,8 @@ export default class World
                 this.pumpkin = new Pumpkin()
                 this.liana = new Liana()
                 this.floor = new Floor()
+                this.bat = new Bat()
+
 
                 this.setup3D()
             }
@@ -50,6 +53,11 @@ export default class World
         // animate the liana material
         if (this.liana) {
             this.liana.update(this.elapsedTime);
+        }
+
+        if(this.bat)
+        {
+            this.bat.update(this.elapsedTime);
         }
 
         // update for the ShadowMapViewer 
