@@ -7,6 +7,8 @@ import Liana from './Liana.js'
 import Floor from './Floor.js'
 import Bird from './Bird.js'
 import Bat from './Bat.js'
+import Moon from './Moon.js'
+import Cloud from './Cloud.js'
 
 export default class World
 {
@@ -27,6 +29,9 @@ export default class World
                 this.floor = new Floor()
                 this.bird = new Bird()
                 this.bat = new Bat()
+                this.moon = new Moon()
+                this.cloud = new Cloud(1, 0.02, 7, 6, -5)
+
 
                 this.setup3D()
             }
