@@ -15,7 +15,7 @@ export default class Bat {
 
     setModel() {
         this.geometry = this.resource.scene.children[0].geometry
-
+        this.resources.items.batDiffuse.flipY = false
         this.material = new BatMaterial({
             map: this.resources.items.batDiffuse,
             roughness: 0.5,

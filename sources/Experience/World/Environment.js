@@ -28,7 +28,7 @@ export default class Environment {
         this.moonLight = new THREE.DirectionalLight('#8accff', 6)
         this.moonLight.castShadow = true
 
-        this.moonLight.shadow.mapSize.set(1024, 1024)
+        this.moonLight.shadow.mapSize.set(2048, 2048)
         this.moonLight.shadow.camera.left = - 10
         this.moonLight.shadow.camera.right = 10
     

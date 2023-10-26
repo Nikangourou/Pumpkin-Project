@@ -25,7 +25,7 @@ export default [
                 { name: 'floor', source: '/assets/floor/floor.glb', type: 'gltf' },
 
                 // bat
-                { name: 'bat', source: '/assets/bat/bat.glb', type: 'gltf' },
+                { name: 'bat', source: '/assets/bat/bat2.glb', type: 'gltf' },
                 { name: 'batDiffuse', source: '/assets/bat/bat-diffuse.png', type: 'texture' },
 
             ]

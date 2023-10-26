@@ -70,8 +70,7 @@ export default class LianaMaterial extends MeshStandardMaterial {
     shader.vertexShader = shader.vertexShader.replace('#include <project_vertex>', [
 
       `transformed += normalize(normal) * 0.2 * fit(uEasing, 0., 1., mix(0.5, 0., uv.x), 1.) * (1.-uv.x);`,
-      // `transformed = clamp(uv.x, 0., 1.);`,
-
+    
       // FLOTTEMENT DES LIANES
       // `transformed += clampedSine(uTime + uv.x) *uv.x *0.5;`,
 
@@ -92,11 +91,9 @@ export default class LianaMaterial extends MeshStandardMaterial {
       `transformed += normal * snoise(vec4(transformed, uTime)) * 0.05;`,
     
       // wave animation
-      // wave on each axis but its do a sinus
-      'transformed.x += clampedSine(uTime * uv.x) * clampedSine(uTime * uv.x) * clampedSine(uTime * uv.x) * 0.5;',
+      // wave on each 
+      'transformed += clampedSine(uTime + uv.x * PI * 4.0) * clampedSine(uTime + uv.x * PI * 4.0) * clampedSine(uTime + uv.x * PI * 4.0) * 0.5;',
    
-      
-
       `#include <project_vertex>`
 
     ].join('\n'));

@@ -34,6 +34,8 @@ export default class BatMaterial extends MeshStandardMaterial {
         'uniform float uEasing;',
         'uniform float uSpeed;',
         'varying vec3 vPosition;',
+
+        'attribute vec2 uv2;',
         // `varying vec2 vUv;`,
         snoise4,
         'float clampedSine(float t){',
@@ -69,7 +71,8 @@ export default class BatMaterial extends MeshStandardMaterial {
 
     shader.vertexShader = shader.vertexShader.replace('#include <project_vertex>', [
       // flap wings
-      `float flapWings = clampedSine(uTime * uv.y) * 0.1;`,
+      `float alt = step(mod(uTime, 0.125), 0.0625);`,
+      `float flapWings = clampedSine(alt * PI * 0.5 * uv2.x) * saturate(uv2.x - 0.1) * 0.1;`,
 
 
       // apply 
