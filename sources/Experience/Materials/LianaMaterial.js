@@ -23,7 +23,7 @@ export default class LianaMaterial extends MeshStandardMaterial {
 
     shader.uniforms.uTime = { value: 0 };
     shader.uniforms.uEasing = { value: 0 };
-    shader.uniforms.uSpeed = {value : 0};
+    shader.uniforms.uSpeed = { value: 0 };
 
     const snoise4 = glsl`#pragma glslify: snoise4 = require(glsl-noise/simplex/4d)`;
 
@@ -54,44 +54,53 @@ export default class LianaMaterial extends MeshStandardMaterial {
 
     shader.fragmentShader = shader.fragmentShader.replace('void main() {',
       [
-          `uniform float uTime;`,
-          `uniform float uEasing;`,
-          `uniform float uSpeed;`,
-          `varying vec3 vPosition;`,
-          // `varying vec2 vUv;`,
-          'float clampedSine(float t){',
-          '   return (sin(t)+1.)*.5;',
-          '}',
-          snoise4,
-          `void main() {`,
+        `uniform float uTime;`,
+        `uniform float uEasing;`,
+        `uniform float uSpeed;`,
+        `varying vec3 vPosition;`,
+        // `varying vec2 vUv;`,
+        'float clampedSine(float t){',
+        '   return (sin(t)+1.)*.5;',
+        '}',
+        snoise4,
+        `void main() {`,
       ].join('\n')
     );
 
     shader.vertexShader = shader.vertexShader.replace('#include <project_vertex>', [
-      
-          `transformed += normalize(normal) * 0.2 * fit(uEasing, 0., 1., mix(0.5, 0., uv.x), 1.) * (1.-uv.x);`,
-          // `transformed = clamp(uv.x, 0., 1.);`,
 
-          // FLOTTEMENT DES LIANES
-          // `transformed += clampedSine(uTime + uv.x) *uv.x *0.5;`,
+      `transformed += normalize(normal) * 0.2 * fit(uEasing, 0., 1., mix(0.5, 0., uv.x), 1.) * (1.-uv.x);`,
+      // `transformed = clamp(uv.x, 0., 1.);`,
 
-          // TEST
-          // `transformed = transformed + normalize(normal) * abs(cos(transformed *(1./10.) *10. - uv.x));`,
+      // FLOTTEMENT DES LIANES
+      // `transformed += clampedSine(uTime + uv.x) *uv.x *0.5;`,
 
-          // GROSSISSEMENT AU PROGRES
-          `float len = 0.0001;`,
-          // la valeur progress doit aller de 0 à 1 et être en boucle
-          `float progress = abs(sin(uTime * 0.1 + (1.-uv.x) * 2.));`,
-          `float smoothing = 0.05;`,
-          `float mask = 1. - smoothstep(progress + len - smoothing, progress + len + smoothing, uv.x);`,
-          `mask *= smoothstep(progress - len - smoothing, progress - len + smoothing, uv.x);`,
+      // TEST
+      // `transformed = transformed + normalize(normal) * abs(cos(transformed *(1./10.) *10. - uv.x));`,
 
-          `transformed += normal * mask * 0.5 * (1.-uv.x);`,
+      // GROSSISSEMENT AU PROGRES
+      `float len = 0.0001;`,
+      // la valeur progress doit aller de 0 à 1 et être en boucle
+      `float progress = abs(sin(uTime * 0.1 + (1.-uv.x) * 2.));`,
+      `float smoothing = 0.05;`,
+      `float mask = 1. - smoothstep(progress + len - smoothing, progress + len + smoothing, uv.x);`,
+      `mask *= smoothstep(progress - len - smoothing, progress - len + smoothing, uv.x);`,
 
-          `#include <project_vertex>`
-        
-      ].join('\n'));
+      `transformed += normal * mask * 0.5 * (1.-uv.x);`,
+
+      // noise the radius 
+      `transformed += normal * snoise(vec4(transformed, uTime)) * 0.05;`,
     
+      // wave animation
+      // wave on each axis but its do a sinus
+      'transformed.x += clampedSine(uTime * uv.x) * clampedSine(uTime * uv.x) * clampedSine(uTime * uv.x) * 0.5;',
+   
+      
+
+      `#include <project_vertex>`
+
+    ].join('\n'));
+
     // UVX
     shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', [
       '#include <map_fragment>',
@@ -111,7 +120,7 @@ export default class LianaMaterial extends MeshStandardMaterial {
       `mask *= smoothstep(progress - len - smoothing, progress - len + smoothing, vUv.x);`,
 
       // `diffuseColor.rgb -=0.5;`,
-      
+
       `diffuseColor.g += mask * 10.;`,
       `diffuseColor.rb += mask;`,
 

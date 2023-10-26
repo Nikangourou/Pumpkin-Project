@@ -137,7 +137,7 @@ export default class Renderer {
         unrealBloomPass.strength = 0.3
         unrealBloomPass.radius = 0.5
         unrealBloomPass.threshold = 0.2
-        this.postProcess.composer.addPass(unrealBloomPass)
+        // this.postProcess.composer.addPass(unrealBloomPass)
     }
 
     resize() {
