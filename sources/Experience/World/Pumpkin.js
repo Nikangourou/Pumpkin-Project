@@ -2,6 +2,7 @@ import * as THREE from "three";
 import Experience from "../Experience";
 import PumpkinMaterial from "../Materials/PumpkinMaterial";
 import anime from "animejs";
+import Alea from "alea";
 
 export default class Pumpkin {
   constructor() {
@@ -13,6 +14,7 @@ export default class Pumpkin {
     this.map = this.resources.items.pumpkinDiffuse;
     // this.map.colorSpace = THREE.SRGBColorSpace;
     this.setModel()
+    this.setSparkleLight()
     this.setJumping()
     this.setAnimation()
 
@@ -49,28 +51,58 @@ export default class Pumpkin {
     });
   }
 
-  // write an animation to play on reload
+  noise(x){
+    const sin = Math.sin
+    return (sin(x) + sin(2.2*x+5.52) + sin(2.9*x+0.93) + sin(4.6*x+8.94)) / 4
+  }
 
-    setJumping()
-    {
-        let jumpingValue = {
-            value: -1,
-        }
 
-        anime({
-            targets: jumpingValue,
-            value: 0.2,
-            duration: 2000,
-            easing: 'spring(15, 100, 30, 8)',
+  // anim the light to make it sparkle candle like with some noise
+  setSparkleLight() {
 
-            update: () => {
-                this.model.position.y = jumpingValue.value
-            }
-        });
+    // get a prng
+    let prng = new Alea(200)
+    
+    let lightValue = {
+      value: 18,
     }
 
-    setAnimation(){
-      setInterval(() => {
+    anime({
+      targets: lightValue,
+      value: 21,
+      duration: 1000,
+      easing: 'easeInOutQuad',
+      direction: 'alternate',
+      loop: true,
+
+      // add noise
+      update: () => {
+        this.pumpkinLight.intensity = lightValue.value + Math.random() * 0.5 
+      }
+    });
+  }
+ 
+
+  // write an animation to play on reload
+  setJumping() {
+    let jumpingValue = {
+      value: -1,
+    }
+
+    anime({
+      targets: jumpingValue,
+      value: 0.2,
+      duration: 2000,
+      easing: 'spring(15, 100, 30, 8)',
+
+      update: () => {
+        this.model.position.y = jumpingValue.value
+      }
+    });
+  }
+
+  setAnimation() {
+    setInterval(() => {
       let animValue = {
         value: 0,
       }
@@ -81,11 +113,11 @@ export default class Pumpkin {
 
       anime({
         targets: animValue,
-        value: Math.PI*2,
+        value: Math.PI * 2,
         easing: 'spring(1, 80, 5, 10)',
 
         update: () => {
-            this.model.rotation.y = animValue.value
+          this.model.rotation.y = animValue.value
         }
       });
 
@@ -95,11 +127,11 @@ export default class Pumpkin {
         easing: 'spring(1, 80, 5, 10)',
 
         update: () => {
-            this.model.position.y = posValue.value
+          this.model.position.y = posValue.value
         }
       });
 
-      }, 10000);
-    }
+    }, 10000);
+  }
 
 }
