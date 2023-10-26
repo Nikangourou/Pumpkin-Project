@@ -21,9 +21,10 @@ export default class Bird {
     this.scene.add(this.birds);
 
     // create a mesh that will represent a bird
-    this.geometry = new THREE.SphereGeometry( 0.2, 16, 16 );
+    this.geometry = new THREE.SphereGeometry( 0.06, 4, 4 );
 
     this.material = new THREE.MeshStandardMaterial({
+      color: '#000',
         map: this.map,
         });
 
@@ -43,48 +44,15 @@ export default class Bird {
     }
   }
 
-    setAnimation(){
-      setInterval(() => {
-      let animValue = {
-        value: 0,
-      }
-
-      let posValue = {
-        value: 0,
-      }
-
-      anime({
-        targets: animValue,
-        value: Math.PI*2,
-        easing: 'spring(1, 80, 5, 10)',
-
-        update: () => {
-            this.model.rotation.y = animValue.value
-        }
-      });
-
-      anime({
-        targets: posValue,
-        value: 0.6,
-        easing: 'spring(1, 80, 5, 10)',
-
-        update: () => {
-            this.model.position.y = posValue.value
-        }
-      });
-
-      }, 10000);
-    }
-
     update(time) 
     {
         // this.birds.rotation.y = time * 0.5
         // this.time = time;
-        if(this.birds.children){
+        if(this.birds.children.length > 0){
           this.birds.children.forEach(b => {
             // const baseAngle = (Math.PI * 2) / 5
-            const angle = Math.random() + Math.PI * 2;
-            const radius = 3 + Math.random() * 5;
+            const angle = Math.random() + (Math.PI * 2)/10;
+            const radius = 3 + Math.random() * 2;
             b.position.x = Math.sin(angle + time * 0.5) * radius;
             b.position.z = Math.cos(angle + time * 0.5) * radius;
             b.position.y = 4 + Math.sin(time * 3 + angle);

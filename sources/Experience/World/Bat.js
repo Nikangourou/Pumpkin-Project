@@ -14,6 +14,9 @@ export default class Bat {
     }
 
     setModel() {
+        this.batArea = new THREE.Group();
+        this.scene.add(this.batArea);
+
         this.geometry = this.resource.scene.children[0].geometry
         this.resources.items.batDiffuse.flipY = false
         this.material = new BatMaterial({
@@ -25,11 +28,13 @@ export default class Bat {
 
         this.mesh = new THREE.Mesh(this.geometry, this.material);
 
-        // scale 10
-        this.mesh.scale.set(10, 10, 10)
-        this.mesh.position.set(0, 5, 0)
+        this.mesh.scale.set(5, 5, 5)
 
-        this.scene.add(this.mesh);
+        this.batArea.add(this.mesh);
+        this.mesh.position.set(3, 3, 3)
+        this.mesh.rotation.set(0, 5*Math.PI/6, 0)
+        this.mesh.castShadow = true
+
 
         this.setEasing();
         this.setSpeed();
@@ -72,6 +77,9 @@ export default class Bat {
     update(time) 
     {
         if (this.material) {
+            this.batArea.rotation.y = time
+            this.batArea.position.y = Math.sin(time * 10) * 0.2 + Math.sin(time)
+
             this.material.update(time, this.uEasing, this.uSpeed);
         }
     }

@@ -22,11 +22,18 @@ export default [
                 { name: 'barkDisplacement', source: '/assets/bark2/displacement.png', type: 'texture' },
 
                 // floor
-                { name: 'floor', source: '/assets/floor/floor.glb', type: 'gltf' },
+                { name: 'floor', source: '/assets/floor/floor3.glb', type: 'gltf' },
 
                 // bat
                 { name: 'bat', source: '/assets/bat/bat2.glb', type: 'gltf' },
                 { name: 'batDiffuse', source: '/assets/bat/bat-diffuse.png', type: 'texture' },
+
+                // moon
+                { name: 'moonDiffuse', source: '/assets/moon/color.png', type: 'texture'},
+                { name: 'moonNormal', source: '/assets/moon/normal.png', type: 'texture'},
+
+                // clouds
+                { name: 'cloud1', source: '/assets/clouds/cloud2.glb', type: 'gltf' },
 
             ]
     }

@@ -29,8 +29,7 @@ export default class Environment {
         this.moonLight.shadow.mapSize.set(2048, 2048)
         this.moonLight.shadow.camera.left = - 10
         this.moonLight.shadow.camera.right = 10
-
-        this.moonLight.position.set(4, 4, -5)
+        this.moonLight.position.set(7, 6, -15)
         this.scene.add(this.moonLight)
 
         // helper
