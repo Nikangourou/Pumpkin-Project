@@ -53,7 +53,7 @@ export default class Renderer {
         this.instance.shadowMap.enabled = true
         // this.instance.shadowMap.autoUpdate = true
         this.instance.toneMapping = THREE.ReinhardToneMapping
-        this.instance.toneMappingExposure = 2
+        this.instance.toneMappingExposure = 4
 
 
         this.context = this.instance.getContext()

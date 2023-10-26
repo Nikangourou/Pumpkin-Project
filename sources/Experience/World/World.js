@@ -5,7 +5,7 @@ import Environment from './Environment.js'
 import Pumpkin from './Pumpkin.js'
 import Liana from './Liana.js'
 import Floor from './Floor.js'
-import Bird from './Bird.js'
+import Fly from './Fly.js'
 import Bat from './Bat.js'
 import Moon from './Moon.js'
 import Cloud from './Cloud.js'
@@ -27,26 +27,12 @@ export default class World
                 this.pumpkin = new Pumpkin()
                 this.liana = new Liana()
                 this.floor = new Floor()
-                this.bird = new Bird()
                 this.bat = new Bat()
                 this.moon = new Moon()
-                this.cloud = new Cloud(1, 0.02, 7, 6, -5)
-
-
-                this.setup3D()
+                this.cloud = new Cloud(1, 0.06, 4, 6, -5)
             }
         })
     }
-
-    setup3D() {
-
-        /**
-         * Axes Helper
-         */
-        const axesHelper = new THREE.AxesHelper(5)
-        this.scene.add(axesHelper)
-
-      }
 
     update()
     {
@@ -60,8 +46,8 @@ export default class World
             this.liana.update(this.elapsedTime);
         }
 
-        if (this.bird) {
-            this.bird.update(this.elapsedTime);
+        if (this.fly) {
+            this.fly.update(this.elapsedTime);
         }
         
         if(this.bat)

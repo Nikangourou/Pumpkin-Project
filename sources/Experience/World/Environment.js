@@ -32,10 +32,6 @@ export default class Environment {
         this.moonLight.position.set(7, 6, -15)
         this.scene.add(this.moonLight)
 
-        // helper
-        this.moonLightHelper = new THREE.DirectionalLightHelper(this.moonLight, 1)
-        this.scene.add(this.moonLightHelper)
-
         // Debug
         if (this.debug) {
             this.debugFolder

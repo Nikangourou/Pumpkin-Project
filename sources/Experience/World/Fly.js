@@ -3,7 +3,7 @@ import Experience from "../Experience";
 import anime from "animejs";
 // import BirdMaterial from "../Materials/BirdMaterial";
 
-export default class Bird {
+export default class Fly {
   constructor() {
     this.experience = new Experience()
     this.scene = this.experience.scene
