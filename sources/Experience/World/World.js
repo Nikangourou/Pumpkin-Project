@@ -57,7 +57,8 @@ export default class World
 
         if (this.bird) {
             this.bird.update(this.elapsedTime);
-
+        }
+        
         if(this.bat)
         {
             this.bat.update(this.elapsedTime);
