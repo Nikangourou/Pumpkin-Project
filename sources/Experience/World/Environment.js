@@ -4,24 +4,22 @@ import { ShadowMapViewer } from 'three/examples/jsm/utils/ShadowMapViewer.js';
 
 export default class Environment {
 
-    constructor()
-    {
+    constructor() {
         this.experience = new Experience()
         this.scene = this.experience.scene
 
         // Debug
         this.debug = this.experience.debug
-        if(this.debug)
-        {
+        if (this.debug) {
             this.debugFolder = this.debug.addFolder('environment')
         }
 
         this.setSunLight()
-    //    this.createHUD()
+        //    this.createHUD()
+        this.createHDRI()
     }
 
-    setSunLight()
-    {
+    setSunLight() {
         this.ambientLight = new THREE.AmbientLight('#8accff', 2)
         this.scene.add(this.ambientLight)
 
@@ -31,7 +29,6 @@ export default class Environment {
         this.moonLight.shadow.mapSize.set(2048, 2048)
         this.moonLight.shadow.camera.left = - 10
         this.moonLight.shadow.camera.right = 10
-    
         this.moonLight.position.set(7, 6, -15)
         this.scene.add(this.moonLight)
 
@@ -40,8 +37,7 @@ export default class Environment {
         this.scene.add(this.moonLightHelper)
 
         // Debug
-        if(this.debug)
-        {
+        if (this.debug) {
             this.debugFolder
                 .add(this.moonLight, 'intensity')
                 .name('intensity')
@@ -49,26 +45,55 @@ export default class Environment {
                 .max(10)
                 .step(0.01)
         }
+    }
 
+    createHDRI() {
+
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+
+        const material = new THREE.ShaderMaterial({
+            side: THREE.BackSide,
+            uniforms: {
+                uColor: { value: new THREE.Color('#8accff') }
+            },
+            vertexShader: `
+                varying vec2 vPosition;
+                void main() {
+                    vPosition = position.xy * 0.5 + 0.5;
+                    gl_Position = projectionMatrix 
+                        * modelViewMatrix 
+                        * vec4( position * 100.0, 1.0 );
+                }
+            `,
+            fragmentShader: `
+                varying vec2 vPosition;
+                uniform vec3 uColor;
+                void main() {
+                    gl_FragColor = vec4(uColor, 1.0) * vPosition.y;
+                }
+            `,
+        });
+        
+        const mesh = new THREE.Mesh(geometry, material);
+        this.scene.add(mesh);
     }
 
     // createHUD() and update() are made for ShadowMapViewer
     createHUD() {
 
-        const lightShadowMapViewer = new ShadowMapViewer( this.moonLight );
+        const lightShadowMapViewer = new ShadowMapViewer(this.moonLight);
         lightShadowMapViewer.position.x = 10;
         lightShadowMapViewer.position.y = 10;
         lightShadowMapViewer.size.width = 400;
         lightShadowMapViewer.size.height = 400;
         lightShadowMapViewer.update();
         this.viewer = lightShadowMapViewer
-
     }
 
-    update(renderer){
+    update(renderer) {
         if (this.viewer && this.moonLight.shadow.map) {
             this.viewer.update()
-            this.viewer.render( renderer );
+            this.viewer.render(renderer);
         }
     }
 }
