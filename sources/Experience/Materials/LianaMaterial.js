@@ -23,6 +23,7 @@ export default class LianaMaterial extends MeshStandardMaterial {
 
     shader.uniforms.uTime = { value: 0 };
     shader.uniforms.uEasing = { value: 0 };
+    shader.uniforms.uWave = { value: 0 };
     shader.uniforms.uSpeed = { value: 0 };
 
     const snoise4 = glsl`#pragma glslify: snoise4 = require(glsl-noise/simplex/4d)`;
@@ -33,6 +34,7 @@ export default class LianaMaterial extends MeshStandardMaterial {
         'uniform float uTime;',
         'uniform float uEasing;',
         'uniform float uSpeed;',
+        'uniform float uWave;',
         'varying vec3 vPosition;',
         // `varying vec2 vUv;`,
         snoise4,
@@ -91,8 +93,11 @@ export default class LianaMaterial extends MeshStandardMaterial {
       `transformed += normal * snoise(vec4(transformed, uTime)) * 0.05;`,
     
       // wave animation
-      // wave on each 
       'transformed += clampedSine(uTime + uv.x * PI * 4.0) * clampedSine(uTime + uv.x * PI * 4.0) * clampedSine(uTime + uv.x * PI * 4.0) * 0.5;',
+      'if (uWave > 0.) {',
+      'transformed.y += clampedSine(uTime + uv.x * PI * 4.) * uWave;',
+      'transformed.x -= clampedSine(uTime + uv.x * PI * 4.) * uWave;',
+      '}',
    
       `#include <project_vertex>`
 
@@ -129,10 +134,11 @@ export default class LianaMaterial extends MeshStandardMaterial {
     this.userData.shader = shader;
   }
 
-  update(time, easingValue) {
+  update(time, easingValue, wave) {
     if (this.userData?.shader) {
       this.userData.shader.uniforms.uTime.value = time;
       this.userData.shader.uniforms.uEasing.value = easingValue;
+      this.userData.shader.uniforms.uWave.value = wave;
     }
   }
 }

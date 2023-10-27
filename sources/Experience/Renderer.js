@@ -19,6 +19,7 @@ export default class Renderer {
         // Debug
         if (this.debug) {
             this.debugFolder = this.debug.addFolder('renderer')
+            this.debugFolder.close()
         }
 
         this.usePostprocess = true
@@ -27,9 +28,7 @@ export default class Renderer {
         this.setPostProcess()
     }
 
-    setInstance() {
-        this.clearColor = '#050510'
-        
+    setInstance() {        
         // Renderer
         this.instance = new THREE.WebGLRenderer({
             alpha: false,
@@ -41,7 +40,6 @@ export default class Renderer {
         this.instance.domElement.style.width = '100%'
         this.instance.domElement.style.height = '100%'
 
-        // this.instance.setClearColor(this.clearColor, 1)
         this.instance.setSize(this.config.width, this.config.height)
         this.instance.setPixelRatio(this.config.pixelRatio)
 
@@ -65,15 +63,6 @@ export default class Renderer {
 
         // Debug
         if (this.debug) {
-            this.debugFolder
-                .addColor(
-                    this,
-                    'clearColor'
-                )
-                .onChange(() => {
-                    this.instance.setClearColor(this.clearColor)
-                })
-
             this.debugFolder
                 .add(
                     this.instance,
