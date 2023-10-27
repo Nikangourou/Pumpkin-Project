@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import Experience from "../Experience";
-import PumpkinMaterial from "../Materials/PumpkinMaterial";
 import anime from "animejs";
 
 export default class Pumpkin {
@@ -25,7 +24,15 @@ export default class Pumpkin {
     this.cameraLookAt = false
 
     // this.map.colorSpace = THREE.SRGBColorSpace;
+
+
+    this.parameters = {}
+    this.parameters.count = 100
+    this.parameters.radius = 5
+    this.parameters.size = 0.2
+
     this.setModel()
+    this.setParticles()
     this.setSparkleLight()
     this.setAnimation()
     this.setResponseToBigWave()
@@ -72,7 +79,97 @@ export default class Pumpkin {
     });
   }
 
-  // anim the light to make it sparkle candle like
+  setParticles()
+  {
+    let prng = new Alea(200)
+    const particleGeometry = new THREE.BufferGeometry()
+
+    const positions = new Float32Array(this.parameters.count * 3)
+    const scales = new Float32Array(this.parameters.count)
+
+    for(let i = 0; i < this.parameters.count; i++)
+    {
+        const i3 = i * 3
+        this.radius = Math.random() * this.parameters.radius
+
+        positions[i3    ] = Math.cos(this.radius) * 3 * Math.random()
+        positions[i3 + 1] = 3 * Math.random()
+        positions[i3 + 2] = Math.sin(this.radius) * 3 * Math.random()
+
+        scales[i] = prng()
+    }
+
+    particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+    particleGeometry.setAttribute('aScale', new THREE.BufferAttribute(scales, 1))
+
+
+    this.particleMaterial = new THREE.ShaderMaterial({
+      // color: '#ffaf19',
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      vertexColors: true,
+      uniforms: {
+        uTime: { value: 0 },
+        uSize: { value: 140 * this.experience.renderer.config.pixelRatio},
+        uDistortion: { value: 0 },
+      
+      },
+      vertexShader: `
+      uniform float uTime; 
+      uniform float uSize;
+      uniform float uDistortion;
+      attribute float aScale;
+
+      void main()
+      {
+          /**
+              * Position
+              */
+          vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+          
+
+          // interval
+          // le mod teste uTime et la 2ème valeur correspond à l'intervalle
+          float alt = step(mod(uTime, 5.), 10.);
+
+          modelPosition += sin(uTime + modelPosition * 10.0 * uDistortion) * 0.1;
+
+          vec4 viewPosition = viewMatrix * modelPosition;
+          vec4 projectedPosition = projectionMatrix * viewPosition;
+          gl_Position = projectedPosition;
+
+          /**
+              * Size
+              */
+          gl_PointSize = uSize * aScale;
+          gl_PointSize *= (1.0 / - viewPosition.z);
+      }
+      `,
+      fragmentShader: `
+      void main()
+      {
+        // Diffuse point
+        float strength = distance(gl_PointCoord, vec2(0.5));
+        strength *= 2.0;
+        strength = 1.0 - strength;
+
+        gl_FragColor = vec4(vec3(strength), 1.0);
+      }
+      `,
+    })
+
+    const particles = new THREE.Points(particleGeometry, this.particleMaterial)
+    this.model.add(particles)
+
+  }
+
+  noise(x){
+    const sin = Math.sin
+    return (sin(x) + sin(2.2*x+5.52) + sin(2.9*x+0.93) + sin(4.6*x+8.94)) / 4
+  }
+
+
+  // anim the light to make it sparkle candle like with some noise
   setSparkleLight() {
 
     let lightValue = {
@@ -143,6 +240,7 @@ export default class Pumpkin {
 
         update: () => {
           this.model.position.y = posValue.value
+          this.uDistortion = posValue.value
         }
       });
 
@@ -243,6 +341,12 @@ export default class Pumpkin {
             this.model.lookAt(this.camera.position)
         }
     }
+  }
+
+  update(time) 
+  {
+      this.particleMaterial.uniforms.uTime.value = time;
+      this.particleMaterial.uniforms.uDistortion.value = this.uDistortion;
   }
 
 }
