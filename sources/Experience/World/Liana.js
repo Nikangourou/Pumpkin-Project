@@ -336,29 +336,29 @@ export default class Liana {
                     this.setModels()
                 })
 
-            this.debugFolder
-                .add(this, 'angle')
-                .name('angle')
-                .min(0)
-                .max(1)
-                .step(0.01)
-                .onChange(() => {
-                    this.destroy()
-                    this.setEasing()
-                    this.setModels()
-                })
+            // this.debugFolder
+            //     .add(this, 'angle')
+            //     .name('angle')
+            //     .min(0)
+            //     .max(1)
+            //     .step(0.01)
+            //     .onChange(() => {
+            //         this.destroy()
+            //         this.setEasing()
+            //         this.setModels()
+            //     })
 
-            this.debugFolder
-                .add(this, 'speed')
-                .name('speed')
-                .min(4000)
-                .max(8000)
-                .step(1000)
-                .onChange(() => {
-                    this.destroy()
-                    this.setEasing()
-                    this.setModels()
-                })
+            // this.debugFolder
+            //     .add(this, 'speed')
+            //     .name('speed')
+            //     .min(4000)
+            //     .max(8000)
+            //     .step(1000)
+            //     .onChange(() => {
+            //         this.destroy()
+            //         this.setEasing()
+            //         this.setModels()
+            //     })
         }
     }
 
