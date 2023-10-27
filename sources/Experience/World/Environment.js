@@ -50,7 +50,7 @@ export default class Environment {
 
         const geometry = new THREE.BoxGeometry(1, 1, 1);
 
-        const material = new THREE.ShaderMaterial({
+        this.material = new THREE.ShaderMaterial({
             side: THREE.BackSide,
             uniforms: {
                 uColor: { value: new THREE.Color(color) },
@@ -73,7 +73,7 @@ export default class Environment {
             `,
         });
 
-        const mesh = new THREE.Mesh(geometry, material);
+        const mesh = new THREE.Mesh(geometry, this.material);
         this.scene.add(mesh);
 
         if (this.debug) {
@@ -82,7 +82,7 @@ export default class Environment {
                 .addColor({ color: color }, 'color')
                 .name('color')
                 .onChange((value) => {
-                    material.uniforms.uColor.value.set(value);
+                    this.material.uniforms.uColor.value.set(value);
                 });
         }
     }
