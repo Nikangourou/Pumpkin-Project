@@ -289,8 +289,7 @@ export default class Liana {
         anime({
             targets: animValue,
             value: 2,
-            duration: 1000,
-            endDelay: 1000,
+            duration: 800,
             easing: 'easeInOutQuad',
             direction: 'alternate',
             update: () => {

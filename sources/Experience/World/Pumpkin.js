@@ -8,6 +8,7 @@ export default class Pumpkin {
     this.experience = new Experience()
     this.scene = this.experience.scene
     this.resources = this.experience.resources
+    this.debug = this.experience.debug
 
     this.resource = this.resources.items.pumpkin
     this.map = this.resources.items.pumpkinDiffuse;
@@ -16,12 +17,20 @@ export default class Pumpkin {
     this.camera = this.experience.camera.instance
     this.mouse = this.experience.mouse
 
+    if (this.debug) {
+      this.debugFolder = this.debug.addFolder('pumpkin')
+      this.debugFolder.close()
+    }
+
+    this.cameraLookAt = false
+
     // this.map.colorSpace = THREE.SRGBColorSpace;
     this.setModel()
     this.setSparkleLight()
     this.setAnimation()
     this.setResponseToBigWave()
     this.setJumping()
+    this.lookAt()
 
     window.addEventListener('click', (e) => {
       this.click(e)
@@ -30,6 +39,7 @@ export default class Pumpkin {
     this.destroyAnimation = false
 
     this.pass = false
+
   }
 
   setModel() {
@@ -148,7 +158,7 @@ export default class Pumpkin {
     //   easing: 'spring(1, 80, 5, 10)',
     //   loop: true,
     //   direction: 'alternate',
-    //   delay: 2000,
+    //   delay: 12000,
 
     //   update: () => {
     //     this.model.rotation.x = animValue.value
@@ -198,8 +208,7 @@ export default class Pumpkin {
       anime({
         targets: animValue,
         value: 4,
-        duration: 1000,
-        endDelay: 1000,
+        duration: 800,
         easing: 'easeInOutQuad',
         direction: 'alternate',
         update: () => {
@@ -211,9 +220,29 @@ export default class Pumpkin {
       });
     }
   }
-  
+
+  // look at with debug
   lookAt() {
-    this.model.lookAt(this.camera.position)
+    let savePos = this.camera.position.clone()
+
+    if (this.debug) {
+      this.debugFolder
+        .add(this, 'cameraLookAt')
+        .name('cameraLookAt')
+        .onChange(() => {
+          if (!this.cameraLookAt) {
+            this.model.lookAt(savePos)
+          }
+        })
+    }
+  }
+
+  update(time) {
+    if (this.model) {
+        if(this.cameraLookAt) {
+            this.model.lookAt(this.camera.position)
+        }
+    }
   }
 
 }

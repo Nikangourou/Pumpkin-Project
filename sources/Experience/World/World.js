@@ -59,7 +59,7 @@ export default class World
         // }
 
         if (this.pumpkin) {
-            this.pumpkin.lookAt()
+            this.pumpkin.update(this.elapsedTime);
         }
 
     }
