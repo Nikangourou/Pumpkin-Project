@@ -1,11 +1,9 @@
 import * as THREE from 'three'
 import Experience from '../Experience.js'
-import PumpkinMaterial from '../Materials/PumpkinMaterial.js'
 import Environment from './Environment.js'
 import Pumpkin from './Pumpkin.js'
 import Liana from './Liana.js'
 import Floor from './Floor.js'
-import Fly from './Fly.js'
 import Bat from './Bat.js'
 import Moon from './Moon.js'
 import Cloud from './Cloud.js'
@@ -59,9 +57,11 @@ export default class World
         // if (this.environment) {
         //     this.environment.update(this.experience.renderer.instance);
         // }
+      
         if (this.pumpkin) {
             this.pumpkin.update(this.elapsedTime);
         }
+
     }
 
     destroy()

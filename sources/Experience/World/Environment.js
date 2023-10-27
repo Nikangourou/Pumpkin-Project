@@ -12,6 +12,7 @@ export default class Environment {
         this.debug = this.experience.debug
         if (this.debug) {
             this.debugFolder = this.debug.addFolder('environment')
+            this.debugFolder.close()
         }
 
         this.setSunLight()
@@ -45,12 +46,14 @@ export default class Environment {
 
     createHDRI() {
 
+        let color = '#6ea5cf'
+
         const geometry = new THREE.BoxGeometry(1, 1, 1);
 
         const material = new THREE.ShaderMaterial({
             side: THREE.BackSide,
             uniforms: {
-                uColor: { value: new THREE.Color('#8accff') }
+                uColor: { value: new THREE.Color(color) },
             },
             vertexShader: `
                 varying vec2 vPosition;
@@ -69,9 +72,19 @@ export default class Environment {
                 }
             `,
         });
-        
+
         const mesh = new THREE.Mesh(geometry, material);
         this.scene.add(mesh);
+
+        if (this.debug) {
+            // color
+            this.debugFolder
+                .addColor({ color: color }, 'color')
+                .name('color')
+                .onChange((value) => {
+                    material.uniforms.uColor.value.set(value);
+                });
+        }
     }
 
     // createHUD() and update() are made for ShadowMapViewer

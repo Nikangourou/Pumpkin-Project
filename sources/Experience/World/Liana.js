@@ -96,11 +96,13 @@ export default class Liana {
         this.debug = this.experience.debug
         if (this.debug) {
             this.debugFolder = this.debug.addFolder('liana')
+            this.debugFolder.close()
         }
 
         this.setModels()
         this.update()
         this.setDebug()
+        this.setBigWave()
     }
 
     createLiana(prng) {
@@ -113,7 +115,7 @@ export default class Liana {
         // midle points
         for (let x = 0; x < 8; x++) {
             let y = (sin(x + prng) + sin(2.2 * (x + prng) + 5.52) + sin(2.9 * (x + prng) + 0.93) + sin(4.6 * (x + prng) + 8.94)) / 4
-            let z = sin(prng + x*2) * 0.3
+            let z = sin(prng + x * 2) * 0.3
             this.path.points.push(new THREE.Vector3(x, y, z))
         }
 
@@ -137,7 +139,7 @@ export default class Liana {
         if (prng < 33) {
             let coef = 0.2
             // Archimedean spiral
-            for (let nb = 0; nb < 10; nb ++) {
+            for (let nb = 0; nb < 10; nb++) {
 
                 let x = nb * Math.cos(nb) * coef + lastPoint.x
                 let y = nb * Math.sin(nb) * coef + lastPoint.y
@@ -153,16 +155,16 @@ export default class Liana {
             }
         } else {
             // Spirng spiral
-            for (let nb = 0; nb < 13; nb ++) {
+            for (let nb = 0; nb < 13; nb++) {
 
                 let x = nb * 0.1 + lastPoint.x
                 let y = nb * Math.sin(nb) * 0.05 + lastPoint.y
-                let z = nb * Math.cos(nb) * 0.05 
+                let z = nb * Math.cos(nb) * 0.05
 
                 this.path.points.push(new THREE.Vector3(x, y, z))
             }
 
-            
+
         }
 
 
@@ -225,8 +227,7 @@ export default class Liana {
         }
     }
 
-    setEasing()
-    {
+    setEasing() {
         let easingValue = {
             value: 0,
         }
@@ -244,12 +245,11 @@ export default class Liana {
         });
     }
 
-    setSpeed()
-    {
+    setSpeed() {
         let speedValue = {
             value: 0,
         }
-        
+
         anime({
             targets: speedValue,
             value: 1,
@@ -261,15 +261,56 @@ export default class Liana {
         });
     }
 
+    setBigWave() {
+        let waveValue = {
+            value: 0,
+        }
 
-    update(time) 
-    {
-        for(let i = 0; i < this.lianaArray.length; i++){
+        anime({
+            targets: waveValue,
+            value: 1,
+            duration: 3000,
+            easing: 'easeInOutSine',
+            loop: true,
+            direction: 'alternate',
+            delay: 6000,
+
+            update: () => {
+                this.uWave = waveValue.value
+            }
+        });
+    }
+
+    setAnimationDestroy() {
+        let animValue = {
+            value: 0,
+        }
+
+        anime({
+            targets: animValue,
+            value: 2,
+            duration: 800,
+            easing: 'easeInOutQuad',
+            direction: 'alternate',
+            update: () => {
+                for (let i = 0; i < this.lianaArray.length; i++) {
+                    this.lianaArray[i].rotation.y += animValue.value * Math.PI / 45
+                    this.lianaArray[i].position.y = animValue.value
+                    this.lianaArray[i].scale.y = 1 + animValue.value / 2
+                    this.lianaArray[i].scale.x = 1 - animValue.value / 4
+                }
+            }
+        });
+    }
+
+
+    update(time) {
+        for (let i = 0; i < this.lianaArray.length; i++) {
             // let finalEasing;
             // (i % 3 == 0) ?
             //     finalEasing = this.uEasing * i * 0.4
             //     : finalEasing = this.uEasing * i * 0.2;
-            this.lianaArray[i].material.update(time, this.uEasing);
+            this.lianaArray[i].material.update(time, this.uEasing, this.uWave);
         }
     }
 

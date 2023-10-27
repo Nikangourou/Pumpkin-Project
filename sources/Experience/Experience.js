@@ -45,6 +45,7 @@ export default class Experience
         this.setResources()
         this.setEnvironment()
         this.setWorld()
+        this.setMouse()
         
         this.sizes.on('resize', () =>
         {
@@ -116,6 +117,19 @@ export default class Experience
     setWorld()
     {
         this.world = new World()
+    }
+
+    setMouse()
+    {
+        this.mouse = {}
+        this.mouse.x = 0
+        this.mouse.y = 0
+
+        window.addEventListener('mousemove', (_event) =>
+        {
+            this.mouse.x = (_event.clientX / this.config.width) * 2 - 1
+            this.mouse.y = - (_event.clientY / this.config.height) * 2 + 1
+        })
     }
 
     update()
