@@ -326,12 +326,10 @@ export default class Liana {
                 .onChange(() => {
                     this.prng1 = new Alea(this.amount)
                     this.angle = this.prng1()
-                    // this.experience.environment.material.uniforms.uColor.
                     this.experience.environment.material.uniforms.uColor.value.r = this.prng1()
                     this.experience.environment.material.uniforms.uColor.value.g = this.prng1()
 
                     this.experience.environment.material.uniforms.uColor.value.b = this.prng1()
-                    console.log(this.experience.environment.material.uniforms.uColor.value);
 
                     this.destroy()
                     this.setEasing()
