@@ -2,23 +2,44 @@ import * as THREE from "three";
 import Experience from "../Experience";
 import PumpkinMaterial from "../Materials/PumpkinMaterial";
 import anime from "animejs";
-import Alea from "alea";
 
 export default class Pumpkin {
   constructor() {
     this.experience = new Experience()
     this.scene = this.experience.scene
     this.resources = this.experience.resources
+    this.debug = this.experience.debug
 
     this.resource = this.resources.items.pumpkin
     this.map = this.resources.items.pumpkinDiffuse;
+    this.raycaster = new THREE.Raycaster()
+
+    this.camera = this.experience.camera.instance
+    this.mouse = this.experience.mouse
+
+    if (this.debug) {
+      this.debugFolder = this.debug.addFolder('pumpkin')
+      this.debugFolder.close()
+    }
+
+    this.cameraLookAt = false
+
     // this.map.colorSpace = THREE.SRGBColorSpace;
     this.setModel()
     this.setSparkleLight()
-    this.setJumping()
     this.setAnimation()
+    this.setResponseToBigWave()
+    this.setJumping()
+    this.lookAt()
+
+    window.addEventListener('click', (e) => {
+      this.click(e)
+    })
+
+    this.destroyAnimation = false
 
     this.pass = false
+
   }
 
   setModel() {
@@ -51,37 +72,27 @@ export default class Pumpkin {
     });
   }
 
-  noise(x){
-    const sin = Math.sin
-    return (sin(x) + sin(2.2*x+5.52) + sin(2.9*x+0.93) + sin(4.6*x+8.94)) / 4
-  }
-
-
-  // anim the light to make it sparkle candle like with some noise
+  // anim the light to make it sparkle candle like
   setSparkleLight() {
 
-    // get a prng
-    let prng = new Alea(200)
-    
     let lightValue = {
-      value: 18,
+      value: 9,
     }
 
     anime({
       targets: lightValue,
-      value: 21,
+      value: 12,
       duration: 1000,
       easing: 'easeInOutQuad',
       direction: 'alternate',
       loop: true,
 
-      // add noise
       update: () => {
-        this.pumpkinLight.intensity = lightValue.value + Math.random() * 0.5 
+        this.pumpkinLight.intensity = lightValue.value + Math.random() * 0.5
       }
     });
   }
- 
+
 
   // write an animation to play on reload
   setJumping() {
@@ -91,7 +102,7 @@ export default class Pumpkin {
 
     anime({
       targets: jumpingValue,
-      value: 0.2,
+      value: 0.6,
       duration: 2000,
       easing: 'spring(15, 100, 30, 8)',
 
@@ -102,7 +113,9 @@ export default class Pumpkin {
   }
 
   setAnimation() {
+
     setInterval(() => {
+
       let animValue = {
         value: 0,
       }
@@ -121,6 +134,8 @@ export default class Pumpkin {
         }
       });
 
+      if (this.destroyAnimation) return
+
       anime({
         targets: posValue,
         value: 0.6,
@@ -132,6 +147,102 @@ export default class Pumpkin {
       });
 
     }, 10000);
+
+    // let animValue = {
+    //   value: 0,
+    // }
+
+    // anime({
+    //   targets: animValue,
+    //   value: Math.PI * 0.1,
+    //   easing: 'spring(1, 80, 5, 10)',
+    //   loop: true,
+    //   direction: 'alternate',
+    //   delay: 12000,
+
+    //   update: () => {
+    //     this.model.rotation.x = animValue.value
+    //   }
+    // });
+  }
+
+  setResponseToBigWave() {
+
+
+    let waveValue = {
+      value: 0.6,
+    }
+    anime({
+      targets: waveValue,
+      value: 2,
+      duration: 3000,
+      easing: 'easeInOutSine',
+      loop: true,
+      direction: 'alternate',
+      delay: 6000,
+
+      update: () => {
+        this.model.position.y = waveValue.value
+      },
+      begin: () => {
+        this.destroyAnimation = true
+      },
+      complete: () => {
+        this.destroyAnimation = false
+      }
+    });
+  }
+
+  click() {
+    this.raycaster.setFromCamera(this.mouse, this.camera)
+    const intersects = this.raycaster.intersectObject(this.model, true)
+
+    if (intersects.length) {
+      this.experience.world.liana.setAnimationDestroy()
+      this.destroyAnimation = true
+
+      let animValue = {
+        value: 0.6,
+      }
+
+      anime({
+        targets: animValue,
+        value: 4,
+        duration: 800,
+        easing: 'easeInOutQuad',
+        direction: 'alternate',
+        update: () => {
+          this.model.position.y = animValue.value
+        },
+        complete: () => {
+          this.destroyAnimation = false
+        }
+      });
+    }
+  }
+
+  // look at with debug
+  lookAt() {
+    let savePos = this.camera.position.clone()
+
+    if (this.debug) {
+      this.debugFolder
+        .add(this, 'cameraLookAt')
+        .name('cameraLookAt')
+        .onChange(() => {
+          if (!this.cameraLookAt) {
+            this.model.lookAt(savePos)
+          }
+        })
+    }
+  }
+
+  update(time) {
+    if (this.model) {
+        if(this.cameraLookAt) {
+            this.model.lookAt(this.camera.position)
+        }
+    }
   }
 
 }
