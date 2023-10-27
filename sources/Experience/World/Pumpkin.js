@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import Experience from "../Experience";
 import anime from "animejs";
+import Alea from "alea";
 
 export default class Pumpkin {
   constructor() {

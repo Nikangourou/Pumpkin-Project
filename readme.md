@@ -1,4 +1,4 @@
-# Three.js - Template - Complex
+# Generative Pumpkin
 
 🚧 This template is under construction
 
