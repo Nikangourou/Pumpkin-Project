@@ -59,9 +59,9 @@ export default class World
         // if (this.environment) {
         //     this.environment.update(this.experience.renderer.instance);
         // }
-        // if (this.pumpkin) {
-        //     this.pumpkin.update(this.elapsedTime);
-        // }
+        if (this.pumpkin) {
+            this.pumpkin.update(this.elapsedTime);
+        }
     }
 
     destroy()

@@ -1,9 +1,9 @@
-import { MeshStandardMaterial } from 'three';
+import { MeshStandardMaterial, PointsMaterial } from 'three';
 import glsl from 'glslify';
 
-export default class PumpkinMaterial extends MeshStandardMaterial {
+export default class PumpkinMaterial extends PointsMaterial {
   /**
-   * @param { import("three").MeshStandardMaterialParameters } params
+   * @param { import("three").PointsMaterialParameters } params
    */
   constructor(params) {
     super({
@@ -19,6 +19,7 @@ export default class PumpkinMaterial extends MeshStandardMaterial {
     super.onBeforeCompile(shader, renderer);
 
     shader.uniforms.uTime = { value: 0 };
+    shader.uniforms.uDistortion = { value: 0 };
 
     const snoise4 = glsl`#pragma glslify: snoise4 = require(glsl-noise/simplex/4d)`;
 
@@ -26,6 +27,7 @@ export default class PumpkinMaterial extends MeshStandardMaterial {
       'void main() {',
       [
         'uniform float uTime;',
+        'uniform float uDistortion;',
         'varying vec3 vPosition;',
         snoise4,
         'float clampedSine(float t){',
@@ -38,6 +40,14 @@ export default class PumpkinMaterial extends MeshStandardMaterial {
         'void main() {',
         '   vPosition = position;',
       ].join('\n')
+    );
+
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <project_vertex>', // passe de local à world
+      `
+          transformed = transformed + normalize(normal) * uDistortion * 2.;
+          #include <project_vertex>
+        `
     );
 
     // NOISE COLOR :
@@ -64,9 +74,10 @@ export default class PumpkinMaterial extends MeshStandardMaterial {
     this.userData.shader = shader;
   }
 
-  update(time) {
+  update(time, distortion) {
     if (this.userData?.shader) {
       this.userData.shader.uniforms.uTime.value = time;
+      this.userData.shader.uniforms.uDistortion.value = distortion;
     }
   }
 }

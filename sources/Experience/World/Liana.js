@@ -90,7 +90,7 @@ export default class Liana {
 
         this.path = new THREE.CatmullRomCurve3([]);
 
-        this.prng1 = new Alea(200)
+        this.prng1 = new Alea(this.amount)
 
         // Debug
         this.debug = this.experience.debug
@@ -280,9 +280,11 @@ export default class Liana {
                 .add(this, 'amount')
                 .name('amount')
                 .min(5)
-                .max(10)
+                .max(20)
                 .step(1)
                 .onChange(() => {
+                    this.prng1 = new Alea(this.amount)
+                    this.angle = this.prng1()
                     this.destroy()
                     this.setEasing()
                     this.setModels()
