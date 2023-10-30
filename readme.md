@@ -1,6 +1,6 @@
 # Generative Pumpkin
 
-🚧 This template is under construction
+This project was created during a WebGL workshop about generative art in order to learn how to create shaders and improve our skills in Three.js.
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
